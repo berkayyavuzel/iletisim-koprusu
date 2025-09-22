@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Communication Bridge</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			--bg: #0f172a;
+			--card: #111826;
+			--text: #e5e7eb;
+			--muted: #94a3b8;
+		}
+		html, body {
+			height: 100%;
+		}
+		body {
+			margin: 0;
+			background: var(--bg);
+			color: var(--text);
+			font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+		}
+		.container {
+			max-width: 920px;
+			margin: 0 auto;
+			padding: 24px;
+		}
+		h1 {
+			text-align: center;
+			font-size: 28px;
+			margin: 8px 0 16px;
+		}
+		.grid {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 16px;
+		}
+		.btn {
+			background: var(--card);
+			border: 1px solid #1f2937;
+			border-radius: 16px;
+			padding: 24px;
+			text-align: center;
+			cursor: pointer;
+			transition: transform .05s ease, background .2s ease, border-color .2s ease;
+			user-select: none;
+		}
+		.btn:active {
+			transform: scale(0.98);
+		}
+		.icon {
+			font-size: 56px;
+			line-height: 1;
+		}
+		.label {
+			display: block;
+			margin-top: 12px;
+			font-size: 20px;
+			color: var(--muted);
+		}
+		.status {
+			text-align: center;
+			margin-top: 12px;
+			font-size: 14px;
+			color: var(--muted);
+			min-height: 20px;
+		}
+		.footer {
+			text-align: center;
+			margin-top: 16px;
+			font-size: 12px;
+			color: var(--muted);
+		}
+		@media (max-width: 680px) {
+			.grid {
+				grid-template-columns: repeat(2, 1fr);
+			}
+			.icon { font-size: 48px; }
+			.label { font-size: 18px; }
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>İletişim Köprüsü</h1>
+		<div class="controls" style="display:flex; flex-wrap:wrap; gap:12px; justify-content:center; align-items:center; margin-bottom:12px;">
+			<button id="repeatBtn" style="padding:10px 14px; border-radius:10px; border:1px solid #334155; background:#1f2937; color:#e5e7eb; cursor:pointer;">Tekrar</button>
+			<label style="display:flex; align-items:center; gap:8px; color:#94a3b8;">Ses:
+				<input id="volume" type="range" min="0" max="1" step="0.01" value="1"/>
+			</label>
+			<label style="display:flex; align-items:center; gap:8px; color:#94a3b8;">Ses Türü:
+				<select id="gender" style="background:#0f172a; color:#e5e7eb; border:1px solid #334155; border-radius:8px; padding:6px 8px;">
+					<option value="female" selected>Kadın</option>
+					<option value="male">Erkek</option>
+				</select>
+			</label>
+			<label style="display:none; align-items:center; gap:8px; color:#94a3b8;">
+				<input id="browserTts" type="checkbox"/>
+				Tarayıcı TTS (Google/Chrome)
+			</label>
+
+		</div>
+
+		<div class="custom" style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; margin-bottom:16px;">
+			<input id="customText" placeholder="Özel cümle yazın (örn: Annemi görmek istiyorum)" style="min-width:320px; flex:1; background:#0b1220; color:#e5e7eb; border:1px solid #334155; border-radius:10px; padding:10px 12px;"/>
+			<button id="customSpeak" style="padding:10px 14px; border-radius:10px; border:1px solid #334155; background:#1f2937; color:#e5e7eb; cursor:pointer;">Konuş</button>
+		</div>
+
+		<div class="tabs" style="display:flex; justify-content:center; gap:8px; margin-bottom:12px;">
+			<button class="tab" data-tab="needs" style="padding:8px 12px; border-radius:10px; border:1px solid #334155; background:#1f2937; color:#e5e7eb; cursor:pointer;">İhtiyaçlarım</button>
+			<button class="tab" data-tab="comm" style="padding:8px 12px; border-radius:10px; border:1px solid #334155; background:#0b1220; color:#e5e7eb; cursor:pointer;">İletişim</button>
+			<button class="tab" data-tab="feel" style="padding:8px 12px; border-radius:10px; border:1px solid #334155; background:#0b1220; color:#e5e7eb; cursor:pointer;">Duygularım</button>
+		</div>
+		<div class="grid" data-panel="needs">
+			<div class="btn" data-need="su" data-text="Su istiyorum." style="border-color:#22d3ee">
+				<div class="icon">💧</div>
+				<span class="label">Su</span>
+			</div>
+			<div class="btn" data-need="yemek" data-text="Açım." style="border-color:#f59e0b">
+				<div class="icon">🍽️</div>
+				<span class="label">Yemek</span>
+			</div>
+			<div class="btn" data-need="tuvalet" data-text="Tuvalete gitmem gerekiyor." style="border-color:#34d399">
+				<div class="icon">🚻</div>
+				<span class="label">Tuvalet</span>
+			</div>
+			<div class="btn" data-need="doktor" data-text="Doktora ihtiyacım var." style="border-color:#60a5fa">
+				<div class="icon">🩺</div>
+				<span class="label">Doktor</span>
+			</div>
+			<div class="btn" data-need="ağrı" data-text="Ağrım var." style="border-color:#f43f5e">
+				<div class="icon">🤕</div>
+				<span class="label">Ağrı</span>
+			</div>
+			<div class="btn" data-need="uyku" data-text="Uyumak istiyorum." style="border-color:#a78bfa">
+				<div class="icon">😴</div>
+				<span class="label">Uyku</span>
+			</div>
+			<div class="btn" data-need="hemşire" data-text="Hemşireye ihtiyacım var." style="border-color:#60a5fa">
+				<div class="icon">🧑‍⚕️</div>
+				<span class="label">Hemşire</span>
+			</div>
+			<div class="btn" data-need="ilaç" data-text="İlaçlarımı istiyorum." style="border-color:#f59e0b">
+				<div class="icon">💊</div>
+				<span class="label">İlaç</span>
+			</div>
+			<div class="btn" data-need="yardım" data-text="Yardım eder misiniz?" style="border-color:#f43f5e">
+				<div class="icon">🆘</div>
+				<span class="label">Yardım</span>
+			</div>
+			<div class="btn" data-need="battaniye" data-text="Üşüyorum, battaniye istiyorum." style="border-color:#22d3ee">
+				<div class="icon">🧣</div>
+				<span class="label">Battaniye</span>
+			</div>
+			<div class="btn" data-need="sıcak" data-text="Sıcakladım, serinlemek istiyorum." style="border-color:#f59e0b">
+				<div class="icon">🥵</div>
+				<span class="label">Sıcak</span>
+			</div>
+			<div class="btn" data-need="soğuk" data-text="Üşüyorum, oda sıcaklığını artırabilir miyiz?" style="border-color:#34d399">
+				<div class="icon">🥶</div>
+				<span class="label">Soğuk</span>
+			</div>
+			<div class="btn" data-need="pozisyon" data-text="Pozisyonumu değiştirmenizi istiyorum." style="border-color:#a78bfa">
+				<div class="icon">🔄</div>
+				<span class="label">Pozisyon</span>
+			</div>
+			<div class="btn" data-need="banyo" data-text="Banyoya gitmek istiyorum." style="border-color:#34d399">
+				<div class="icon">🛁</div>
+				<span class="label">Banyo</span>
+			</div>
+			<div class="btn" data-need="eller" data-text="Ellerimi yıkamak istiyorum." style="border-color:#22d3ee">
+				<div class="icon">🧼</div>
+				<span class="label">Eller</span>
+			</div>
+			<div class="btn" data-need="aile" data-text="Ailemi aramak istiyorum." style="border-color:#60a5fa">
+				<div class="icon">👨‍👩‍👧‍👦</div>
+				<span class="label">Aile</span>
+			</div>
+			<div class="btn" data-need="telefon" data-text="Telefonumu istiyorum." style="border-color:#f59e0b">
+				<div class="icon">📱</div>
+				<span class="label">Telefon</span>
+			</div>
+			<div class="btn" data-need="pencereyi aç" data-text="Pencereyi açabilir misiniz?" style="border-color:#22d3ee">
+				<div class="icon">🪟</div>
+				<span class="label">Pencere Aç</span>
+			</div>
+			<div class="btn" data-need="pencereyi kapa" data-text="Pencereyi kapatabilir misiniz?" style="border-color:#334155">
+				<div class="icon">🪟</div>
+				<span class="label">Pencere Kapa</span>
+			</div>
+			<div class="btn" data-need="müzik" data-text="Müzik açabilir misiniz?" style="border-color:#a78bfa">
+				<div class="icon">🎵</div>
+				<span class="label">Müzik</span>
+			</div>
+			<div class="btn" data-need="tv" data-text="Televizyonu açabilir misiniz?" style="border-color:#60a5fa">
+				<div class="icon">📺</div>
+				<span class="label">TV</span>
+			</div>
+			<div class="btn" data-need="evet" data-text="Evet." style="border-color:#34d399">
+				<div class="icon">👍</div>
+				<span class="label">Evet</span>
+			</div>
+			<div class="btn" data-need="hayır" data-text="Hayır." style="border-color:#f43f5e">
+				<div class="icon">👎</div>
+				<span class="label">Hayır</span>
+			</div>
+			<div class="btn" data-need="teşekkürler" data-text="Teşekkür ederim." style="border-color:#f59e0b">
+				<div class="icon">🙏</div>
+				<span class="label">Teşekkürler</span>
+			</div>
+		</div>
+
+		<div class="grid" data-panel="comm" style="display:none;">
+			<div class="btn" data-text="Anlamadım." style="border-color:#60a5fa"><div class="icon">❓</div><span class="label">Anlamadım</span></div>
+			<div class="btn" data-text="Tekrar söyler misin?" style="border-color:#22d3ee"><div class="icon">🔁</div><span class="label">Tekrar</span></div>
+			<div class="btn" data-text="Daha yavaş konuş lütfen." style="border-color:#f59e0b"><div class="icon">🐢</div><span class="label">Yavaş</span></div>
+			<div class="btn" data-text="Yüksek sesle konuşur musun?" style="border-color:#f43f5e"><div class="icon">🔊</div><span class="label">Daha Sesli</span></div>
+			<div class="btn" data-text="Evet." style="border-color:#34d399"><div class="icon">👍</div><span class="label">Evet</span></div>
+			<div class="btn" data-text="Hayır." style="border-color:#f43f5e"><div class="icon">👎</div><span class="label">Hayır</span></div>
+			<div class="btn" data-text="Bilmiyorum." style="border-color:#a78bfa"><div class="icon">🤷</div><span class="label">Bilmiyorum</span></div>
+			<div class="btn" data-text="Lütfen." style="border-color:#60a5fa"><div class="icon">🙏</div><span class="label">Lütfen</span></div>
+			<div class="btn" data-text="Teşekkür ederim." style="border-color:#f59e0b"><div class="icon">🤝</div><span class="label">Teşekkür</span></div>
+		</div>
+
+		<div class="grid" data-panel="feel" style="display:none;">
+			<div class="btn" data-text="Açım." style="border-color:#f59e0b"><div class="icon">🍽️</div><span class="label">Açım</span></div>
+			<div class="btn" data-text="Susadım." style="border-color:#22d3ee"><div class="icon">💧</div><span class="label">Susadım</span></div>
+			<div class="btn" data-text="Tuvalete gitmem gerek." style="border-color:#34d399"><div class="icon">🚻</div><span class="label">Tuvalet</span></div>
+			<div class="btn" data-text="Yoruldum." style="border-color:#a78bfa"><div class="icon">😴</div><span class="label">Yoruldum</span></div>
+			<div class="btn" data-text="Ağrım var." style="border-color:#f43f5e"><div class="icon">🤕</div><span class="label">Ağrı</span></div>
+			<div class="btn" data-text="Kendimi iyi hissetmiyorum." style="border-color:#f43f5e"><div class="icon">🤢</div><span class="label">İyi Değilim</span></div>
+			<div class="btn" data-text="İyiyim." style="border-color:#34d399"><div class="icon">😊</div><span class="label">İyiyim</span></div>
+			<div class="btn" data-text="Üzgünüm." style="border-color:#60a5fa"><div class="icon">😔</div><span class="label">Üzgün</span></div>
+			<div class="btn" data-text="Mutluyum." style="border-color:#f59e0b"><div class="icon">😄</div><span class="label">Mutlu</span></div>
+			<div class="btn" data-text="Kızgınım." style="border-color:#f43f5e"><div class="icon">😠</div><span class="label">Kızgın</span></div>
+			<div class="btn" data-text="Bir şeye ihtiyacım yok." style="border-color:#94a3b8"><div class="icon">✔️</div><span class="label">İhtiyacım Yok</span></div>
+		</div>
+		<div class="status" id="status"></div>
+		<div class="stats" style="text-align:center; margin-top:12px;">
+			<button id="refreshStats" style="padding:8px 12px; border-radius:10px; border:1px solid #334155; background:#0b1220; color:#e5e7eb; cursor:pointer;">İstatistikleri Yenile</button>
+			<div id="statsOut" style="margin-top:8px; color:#94a3b8; font-size:14px;"></div>
+		</div>
+		<div class="footer">Konuşmak için bir ikona dokunun</div>
+	</div>
+
+		<audio id="player" aria-live="polite"></audio>
+	<script>
+		const statusEl = document.getElementById('status');
+		const player = document.getElementById('player');
+		const repeatBtn = document.getElementById('repeatBtn');
+		const volume = document.getElementById('volume');
+		const genderSel = document.getElementById('gender');
+		const browserTts = document.getElementById('browserTts');
+
+		const customText = document.getElementById('customText');
+		const customSpeak = document.getElementById('customSpeak');
+		const refreshStats = document.getElementById('refreshStats');
+		const statsOut = document.getElementById('statsOut');
+
+		let BACKEND_URL;
+		if (window.location.protocol === 'file:') {
+			BACKEND_URL = 'http://localhost:5000';
+		} else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+			BACKEND_URL = 'http://localhost:5000';
+		} else {
+			// Same origin but force port 5000 if a port exists, otherwise keep origin
+			const origin = window.location.origin;
+			const hasPort = /:\\d+$/.test(origin);
+			BACKEND_URL = hasPort ? origin.replace(/:\\d+$/, ':5000') : origin;
+		}
+		console.log('Using backend:', BACKEND_URL);
+
+		function setStatus(text) {
+			statusEl.textContent = text || '';
+		}
+
+		// Tarayıcı TTS (Google/Chrome) yardımcıları
+		let cachedVoices = [];
+		function getVoicesOnce(){
+			const vs = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+			if (vs && vs.length) cachedVoices = vs;
+			return cachedVoices;
+		}
+		function waitVoices(timeoutMs = 1500){
+			return new Promise(resolve => {
+				const start = Date.now();
+				(function check(){
+					const vs = getVoicesOnce();
+					if (vs.length || Date.now() - start > timeoutMs) return resolve(vs);
+					setTimeout(check, 50);
+				})();
+			});
+		}
+		function chooseTurkishVoiceByGender(gender) {
+			const voices = getVoicesOnce().filter(v => (v.lang || '').toLowerCase().startsWith('tr'));
+			if (!voices.length) return null;
+			const FEMALE_PREF = [/google.*turk/i, /seda/i, /zehra/i, /female/i, /kad[ıi]n/i];
+			const MALE_PREF = [/google.*turk/i, /tolga/i, /ahmet/i, /murat/i, /male/i, /erkek/i];
+			const matchPref = (rxs) => voices.find(v => rxs.some(rx => rx.test(v.name))) || null;
+			if (gender === 'female') return matchPref(FEMALE_PREF) || voices[0];
+			if (gender === 'male') return matchPref(MALE_PREF) || voices[0];
+			return voices[0];
+		}
+
+		// Varsayılan: erkek seçiliyken tarayıcı TTS açık, kadın seçiliyken kapalı
+		browserTts.checked = (genderSel.value === 'male');
+		genderSel.addEventListener('change', () => {
+			browserTts.checked = (genderSel.value === 'male');
+		});
+
+		async function speakPayload(payload) {
+			setStatus('Seslendiriliyor…');
+			try {
+				if (browserTts.checked && 'speechSynthesis' in window) {
+					await waitVoices();
+					const utter = new SpeechSynthesisUtterance(payload.text || '');
+					utter.lang = 'tr-TR';
+					utter.rate = 1.0;
+					utter.volume = parseFloat(volume.value || '1');
+					const v = chooseTurkishVoiceByGender(genderSel.value);
+					if (v) utter.voice = v;
+					window.speechSynthesis.cancel();
+					window.speechSynthesis.speak(utter);
+					setStatus('');
+					lastPayload = payload;
+					return;
+				}
+
+				const res = await fetch(BACKEND_URL + '/speak', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(payload)
+				});
+				if (!res.ok) {
+					const err = await res.json().catch(() => ({}));
+					throw new Error(err.error || ('HTTP ' + res.status));
+				}
+				const blob = await res.blob();
+				const url = URL.createObjectURL(blob);
+				player.src = url;
+				await player.play();
+				setStatus('');
+				lastPayload = payload;
+			} catch (e) {
+				console.error(e);
+				setStatus('Error: ' + (e.message || e));
+			}
+		}
+
+		async function speakNeed(need, category) {
+			const payload = { need, category, lang: 'tr', provider: 'gtts', gender: genderSel.value };
+			await speakPayload(payload);
+		}
+
+		async function speakText(text, category) {
+			const payload = { text, category, lang: 'tr', provider: 'gtts', gender: genderSel.value };
+			await speakPayload(payload);
+		}
+
+		let lastPayload = null;
+		function panelOf(el){
+			const panel = el.closest('[data-panel]');
+			if (!panel) return undefined;
+			return panel.getAttribute('data-panel');
+		}
+		document.querySelectorAll('.btn').forEach(btn => {
+			btn.addEventListener('click', () => {
+				const cat = panelOf(btn);
+				const txt = btn.dataset.text;
+				const need = btn.dataset.need;
+				if (txt) speakText(txt, cat); else speakNeed(need, cat);
+			});
+			btn.setAttribute('role','button');
+			btn.setAttribute('aria-label', btn.querySelector('.label').textContent);
+			btn.tabIndex = 0;
+			btn.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault();
+					const cat = panelOf(btn);
+					const txt = btn.dataset.text;
+					const need = btn.dataset.need;
+					if (txt) speakText(txt, cat); else speakNeed(need, cat);
+				}
+			});
+		});
+
+		repeatBtn.addEventListener('click', () => { if (lastPayload) speakPayload(lastPayload); });
+		volume.addEventListener('input', () => { player.volume = parseFloat(volume.value || '1'); });
+
+		customSpeak.addEventListener('click', () => {
+			const t = (customText.value || '').trim();
+			if (!t) { setStatus('Lütfen cümle yazın'); return; }
+			speakText(t, 'custom');
+		});
+
+		// Tabs
+		const tabs = document.querySelectorAll('.tab');
+		const panels = document.querySelectorAll('[data-panel]');
+		tabs.forEach(tab => tab.addEventListener('click', () => {
+			const target = tab.getAttribute('data-tab');
+			tabs.forEach(t => t.style.background = '#0b1220');
+			tab.style.background = '#1f2937';
+			panels.forEach(p => p.style.display = (p.getAttribute('data-panel') === target ? '' : 'none'));
+		}));
+		// Default active
+		document.querySelector('.tab[data-tab="needs"]').click();
+
+		// Stats
+		async function loadStats(){
+			try {
+				const res = await fetch(BACKEND_URL + '/stats');
+				if(!res.ok) throw new Error('HTTP '+res.status);
+				const data = await res.json();
+				const items = Object.entries(data.counts || {}).sort((a,b)=>b[1]-a[1]).slice(0,10);
+				statsOut.innerHTML = items.map(([k,v])=>`${k}: ${v}`).join(' | ') || 'Henüz veri yok';
+			} catch(e){ statsOut.textContent = 'İstatistik okunamadı'; }
+		}
+		refreshStats.addEventListener('click', loadStats);
+		loadStats();
+	</script>
+</body>
+</html>
+
+
