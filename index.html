@@ -428,7 +428,7 @@
 		loadStats();
 
 		// Weekboard (Pzt..Pzr), gerçek zamanlı yakın
-		const DAYS_TR = ['Pzt','Sal','Çar','Per','Cum','Cmt','Pzr'];
+		const DAYS_TR = ['Pzr','Pzt','Sal','Çar','Per','Cum','Cmt']; // 0=Sun..6=Sat (UTC esaslı)
 		function buildWeekGrid(data){
 			weekGrid.innerHTML = '';
 			const start = data.range?.start, end = data.range?.end;
@@ -444,7 +444,12 @@
 				head.style.textAlign = 'center';
 				head.style.color = '#94a3b8';
 				head.style.marginBottom = '6px';
-				head.textContent = (DAYS_TR[idx % 7] || dayKey) + ' (' + dayKey.slice(5) + ')';
+				// Haftanın günü: UTC bazlı doğru hesap için UTC günü kullan
+				try {
+					const d = new Date(dayKey + 'T00:00:00Z');
+					const wd = d.getUTCDay(); // 0=Pazar
+					head.textContent = (DAYS_TR[wd] || '') + ' (' + dayKey.slice(5) + ')';
+				} catch { head.textContent = dayKey; }
 				col.appendChild(head);
 				const events = data.events[dayKey] || [];
 				if (!events.length){
