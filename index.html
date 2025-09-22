@@ -243,6 +243,11 @@
 			<button id="refreshStats" style="padding:8px 12px; border-radius:10px; border:1px solid #334155; background:#0b1220; color:#e5e7eb; cursor:pointer;">İstatistikleri Yenile</button>
 			<div id="statsOut" style="margin-top:8px; color:#94a3b8; font-size:14px;"></div>
 		</div>
+
+		<div class="weekboard" style="margin-top:16px;">
+			<h2 style="text-align:center; font-size:18px; margin:6px 0 10px; color:#e5e7eb;">Haftalık Kullanım</h2>
+			<div id="weekGrid" style="display:grid; grid-template-columns: repeat(7, 1fr); gap:8px;"></div>
+		</div>
 		<div class="footer">Konuşmak için bir ikona dokunun</div>
 	</div>
 
@@ -259,6 +264,7 @@
 		const customSpeak = document.getElementById('customSpeak');
 		const refreshStats = document.getElementById('refreshStats');
 		const statsOut = document.getElementById('statsOut');
+		const weekGrid = document.getElementById('weekGrid');
 
 		let BACKEND_URL;
 		if (window.location.protocol === 'file:') {
@@ -420,7 +426,64 @@
 		}
 		refreshStats.addEventListener('click', loadStats);
 		loadStats();
+
+		// Weekboard (Pzt..Pzr), gerçek zamanlı yakın
+		const DAYS_TR = ['Pzt','Sal','Çar','Per','Cum','Cmt','Pzr'];
+		function buildWeekGrid(data){
+			weekGrid.innerHTML = '';
+			const start = data.range?.start, end = data.range?.end;
+			// gün anahtarlarını sırayla al
+			const keys = Object.keys(data.events || {}).sort();
+			keys.forEach((dayKey, idx) => {
+				const col = document.createElement('div');
+				col.style.background = '#0b1220';
+				col.style.border = '1px solid #334155';
+				col.style.borderRadius = '10px';
+				col.style.padding = '8px';
+				const head = document.createElement('div');
+				head.style.textAlign = 'center';
+				head.style.color = '#94a3b8';
+				head.style.marginBottom = '6px';
+				head.textContent = (DAYS_TR[idx % 7] || dayKey) + ' (' + dayKey.slice(5) + ')';
+				col.appendChild(head);
+				const events = data.events[dayKey] || [];
+				if (!events.length){
+					const empty = document.createElement('div');
+					empty.style.color = '#64748b';
+					empty.style.fontSize = '12px';
+					empty.textContent = '—';
+					col.appendChild(empty);
+				} else {
+					events.slice().reverse().forEach(ev => {
+						const row = document.createElement('div');
+						row.style.borderTop = '1px dashed #1f2937';
+						row.style.padding = '6px 0';
+						row.style.fontSize = '12px';
+						row.style.color = '#e5e7eb';
+						row.textContent = `[${ev.time}] ${ev.label}`;
+						col.appendChild(row);
+					});
+				}
+				weekGrid.appendChild(col);
+			});
+		}
+
+		async function loadWeekboard(){
+			try{
+				const res = await fetch(BACKEND_URL + '/events_by_day?days=7');
+				if(!res.ok) throw new Error('HTTP '+res.status);
+				const data = await res.json();
+				buildWeekGrid(data);
+			}catch(e){
+				console.error(e);
+			}
+		}
+
+		// İlk yükleme ve periyodik güncelleme (yakın gerçek zamanlı)
+		loadWeekboard();
+		setInterval(loadWeekboard, 5000);
 	</script>
 </body>
 </html>
+
 
