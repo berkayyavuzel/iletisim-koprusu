@@ -1,46 +1,54 @@
-# Communication Bridge – MVP
+# 🌉 Communication Bridge: Afazi Hastaları için Sesli İletişim Uygulaması
 
-Basit ihtiyaçlar için ikon tabanlı TTS iletişim aracı.
+### 🚀 Proje Hakkında
 
-## Özellikler
-- 6 büyük ikon: Su, Yemek, Tuvalet, Doktor, Ağrı, Uyku
-- Flask backend `/speak` ucu: `{ "need": "water" }` ile MP3 döner
-- OpenAI TTS (gpt-4o-mini-tts) ile seslendirme
-- Basit HTML/CSS/JS arayüz, anında oynatma
+**Communication Bridge**, inme veya diğer nörolojik nedenlerle afazi (konuşma güçlüğü) yaşayan bireylerin temel ihtiyaçlarını ve duygularını hızlı ve etkili bir şekilde ifade etmelerini sağlayan bir iletişim aracıdır. Projemiz, kullanıcı dostu ikonlara dayalı basit bir arayüzle, bireylerin tek bir dokunuşla doğal ve anlaşılır cümleler kurmasına olanak tanır. Amacımız, konuşma yetisini kısmen kaybetmiş kişilerin yaşam kalitesini artırarak onlara güvenli bir iletişim köprüsü sunmaktır.
 
-## Kurulum
+### ✨ Temel Özellikler
 
-1) Python 3.10+
+* **İkon Tabanlı Arayüz:** Kullanımı kolay, büyük ve anlaşılır ikonlarla tasarlanmış arayüz.
+* **Hızlı Cümle Oluşturma:** Tek bir dokunuşla önceden tanımlanmış ihtiyaçları (su, ağrı, doktor vb.) yüksek kaliteli sesle ifade etme.
+* **Çok Dilli Destek:** Proje, farklı dillerde cümle ve ikon desteğine sahiptir (mevcut kodda Türkçe ve İngilizce önceliklidir).
+* **Yüksek Kaliteli Seslendirme:** **OpenAI TTS** veya **Google Text-to-Speech (gTTS)** gibi güçlü servisleri kullanarak doğal ve anlaşılır sesler üretir.
+* **Kullanım İstatistikleri:** Uygulamanın en sık kullanılan ihtiyaçlarını ve cümlelerini anonim olarak kaydeden ve analiz eden basit bir loglama sistemi. (`/stats` ve `/stats_daily` endpointleri ile erişilebilir).
+* **Kolay Kurulum:** Herhangi bir Web tarayıcısında çalışabilen, Python/Flask tabanlı hafif bir backend ile hızlıca ayağa kaldırılabilir.
 
-2) Bağımlılıkları yükle:
-```bash
-pip install -r requirements.txt
-```
+### 💻 Teknik Mimari
 
-3) Ortam değişkeni ayarla:
-```bash
-# Windows PowerShell
-$env:OPENAI_API_KEY = "YOUR_API_KEY"
-```
+Proje, iki ana bileşenden oluşur:
+* **Frontend (HTML/CSS/JS):** Basit, minimalist ve erişilebilir bir kullanıcı arayüzü sunar. Büyük butonlar ve yüksek kontrastlı tasarım, mobil ve tablet cihazlar için idealdir.
+* **Backend (Python/Flask):**
+    * **`/speak` Endpoint'i:** Gelen ihtiyaca (need) göre uygun bir cümle oluşturur ve bunu metinden sese dönüştürür.
+    * **Metinden Sese (TTS) Motoru:** **OpenAI TTS** (API anahtarı varsa) veya yedek olarak **gTTS** kullanarak yüksek kaliteli ses dosyaları oluşturur.
+    * **Loglama Sistemi:** Kullanıcı etkileşimlerini anonim olarak kaydeder.
+    * **`/stats` ve `/stats_daily` Endpoint'leri:** Toplanan kullanım verilerini analiz eder ve raporlar.
 
-4) Backend'i çalıştır:
-```bash
-python backend/app.py
-```
+### 🔧 Kurulum ve Çalıştırma
 
-5) Frontend'i aç:
-- `frontend/index.html` dosyasını tarayıcıda açın.
-- Yerelde backend `http://localhost:5000` beklenir.
+1.  **Gerekli Paketleri Kurun:**
+    ```bash
+    pip install Flask Flask-Cors gTTS openai
+    ```
+2.  **API Anahtarınızı Ayarlayın (İsteğe Bağlı):**
+    OpenAI TTS'i kullanmak isterseniz, `OPENAI_API_KEY` ortam değişkenini ayarlamanız gerekir. Bu opsiyoneldir; anahtar yoksa sistem otomatik olarak gTTS'e düşer.
+    ```bash
+    export OPENAI_API_KEY="sk-..."
+    ```
+3.  **Uygulamayı Çalıştırın:**
+    ```bash
+    python app.py
+    ```
+    Uygulama yerel makinenizde `http://127.0.0.1:5000` adresinde çalışacaktır.
+4.  **Uygulamayı Kullanın:**
+    Bir `cURL` komutu ile test yapabilirsiniz:
+    ```bash
+    curl -X POST [http://127.0.0.1:5000/speak](http://127.0.0.1:5000/speak) -H "Content-Type: application/json" -d '{"need": "water"}' --output water.mp3
+    ```
+    Bu komut, "Su istiyorum." cümlesini seslendirir ve `water.mp3` olarak kaydeder.
 
-## API
+### 📝 Gelecek Planları
 
-POST `/speak`
-- Girdi JSON: `{ "need": "water" }`
-- Çıktı: `audio/mpeg` MP3 akışı
-- Geçerli değerler: `water, food, toilet, doctor, pain, sleep`
-
-Sağlık: GET `/health` → `{ "status": "ok" }`
-
-## Notlar
-- CORS açık. Demo için uygundur.
-- Ses modeli ve `voice` değeri ihtiyaca göre değiştirilebilir.
+* **Özelleştirilebilir Cümleler:** Kullanıcıların kendi ihtiyaçlarına göre yeni cümleler eklemesine olanak tanıma.
+* **Kullanıcı Profilleri:** Her hasta için kişisel ayarların ve sık kullanılan ifadelerin kaydedilmesi.
+* **Duygu ve Ton Kontrolü:** Seçilen ikona göre ses tonunun ayarlanması (örneğin, "ağrı" butonu için daha endişeli bir ton).
+* **Mobil Uygulama Olarak Geliştirme:** iOS ve Android cihazlar için optimize edilmiş native uygulamalar.
